@@ -355,7 +355,17 @@ function church_tree_to_esprima_ast(church_tree) {
 		}
 	}
 
+    function make_const_expression(leaf) {
+        var expression = deep_copy(expression_node);
+
+        expression.type = "CallExpression";
+		expression.callee = {"type": "Identifier", "name": "_const"};
+        expression["arguments"] = [leaf];
+        return expression;
+    }
+
 	function make_leaf_expression(church_leaf) {
+        var is_const = true;
 		var expression = deep_copy(expression_node);
 		if (!util.is_leaf(church_leaf) && church_leaf.children.length == 0) {
 			expression =  {
@@ -365,12 +375,14 @@ function church_tree_to_esprima_ast(church_tree) {
 		} else if (church_leaf.text == ".") {
 			throw util.make_church_error("SyntaxError", church_leaf.start, church_leaf.end, "Invalid dot");
 		} else if (church_leaf.text == undefined) {
+            is_const = false;
 			expression["type"] = "Identifier";
 			expression["name"] = "undefined";
 		} else if (util.boolean_aliases[church_leaf.text] != undefined) {
 			expression["type"] = "Literal";
 			expression["value"] = util.boolean_aliases[church_leaf.text];
 		} else if (util.is_identifier(church_leaf.text)) {
+            is_const = false;
 			expression = {type: 'Identifier', name: church_leaf.text}
 		} else {
 			var value = get_value_of_string_or_number(church_leaf.text);
@@ -385,7 +397,11 @@ function church_tree_to_esprima_ast(church_tree) {
 
 		}
 		expression["loc"] = make_location(church_leaf);
-		return expression;
+        if (is_const) {
+            return make_const_expression(expression);
+        } else {
+            return expression;
+        }
 	}
 
 	function make_expression_list(church_trees) {

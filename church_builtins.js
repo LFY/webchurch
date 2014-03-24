@@ -72,6 +72,14 @@ var args_to_list = module.exports.args_to_list = function (args) {
   return arrayToList(args_to_array(args));
 };
 
+var _const = $b({
+    name : "_const",
+    alias : "const",
+    desc : "Marks constants. Library function only!",
+    params : [{name : 'v', type : "", desc: "the constant in question"}],
+    fn : function (x) { return x; }
+});
+
 var plus = $b({
   name: 'plus',
   alias: '+',
