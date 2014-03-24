@@ -290,7 +290,6 @@ function church_tree_to_esprima_ast(church_tree) {
 		return return_statement;
 	}
 
-
     function make_if_expression(church_tree) {
         var conditional_expression = deep_copy(conditional_expression_node)
         conditional_expression.test = make_expression(church_tree.children[1])
