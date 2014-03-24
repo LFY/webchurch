@@ -72,7 +72,7 @@ function evaluate(church_codestring,precomp,argstring) {
     
   var code_and_source_map = escodegen.generate(js_ast, {"sourceMap": "whatever", "sourceMapWithCode": true, "format": {"compact" : false}});
     
-  // console.log(code_and_source_map.code);
+  console.log(code_and_source_map.code);
 
     
 	try {
@@ -108,6 +108,7 @@ function evaluate(church_codestring,precomp,argstring) {
     // 		church_sites = church_sites.filter(function (x) {return x});
     
  		if (church_sites.length == 0) {
+            console.log("NO CHURCH SITES");
  			throw err;
  		} else {
       
@@ -166,3 +167,5 @@ module.exports = {
 evaluate: evaluate,
 format_result: util.format_result
 };
+
+// evaluate("(for-each display '(1 2 3 4 5)) (newline)", false, "");
