@@ -72,12 +72,29 @@ var args_to_list = module.exports.args_to_list = function (args) {
   return arrayToList(args_to_array(args));
 };
 
+// Supporting finally-tagless interpretations
+
 var _const = $b({
     name : "_const",
     alias : "const",
     desc : "Marks constants. Library function only!",
     params : [{name : 'v', type : "", desc: "the constant in question"}],
     fn : function (x) { return x; }
+});
+
+var _if = $b({
+    name : "_if",
+    alias : "if",
+    desc : "Marks branches. Library function only!",
+    params : [ {name : 'c', type : "", desc: "condition"}, 
+               {name : 't', type : "", desc: "then-expr"}, 
+               {name : 'e', type : "", desc: "else-expr"} ],
+    fn : function (c, t, e) { 
+        if (c) {
+            return t();
+        } else {
+            return e();
+        }}
 });
 
 var plus = $b({

@@ -273,6 +273,15 @@ function church_tree_to_esprima_ast(church_tree) {
 		return func_expression;
 	}
 
+    function make_thunk(transformed_church_expr) {
+        var func_expression = deep_copy(function_expression_node);
+        var retnode = deep_copy(return_statement_node);
+        retnode.argument = transformed_church_expr;
+        func_expression["body"]["body"].push(retnode);
+        func_expression["params"] = [];
+        return func_expression;
+    }
+
 	function make_call_expression(church_tree) {
 		var call_expression = deep_copy(call_expression_node);
 		var callee = church_tree.children[0];
@@ -291,6 +300,29 @@ function church_tree_to_esprima_ast(church_tree) {
 	}
 
     function make_if_expression(church_tree) {
+        var if_call = deep_copy(call_expression_node);
+
+		var cond_expr = make_expression(church_tree.children[1]);
+		var then_expr = make_expression(church_tree.children[2]);
+
+        var has_else = church_tree.children[3];
+        var else_expr = {type : "Identifier", name : "undefined" }
+
+        if (has_else) {
+            else_expr = make_expression(church_tree.children[3]);
+        }
+
+        var then_expr2 = make_thunk(then_expr);
+        var else_expr2 = make_thunk(else_expr);
+
+        if_call.callee = { type : "Identifier", name : "_if" } ;
+        if_call["arguments"] = [cond_expr, then_expr2, else_expr2];
+		// if_call["loc"] = make_location(church_tree);
+		return if_call;
+    }
+
+
+    function make_initial_if_expression(church_tree) {
         var conditional_expression = deep_copy(conditional_expression_node)
         conditional_expression.test = make_expression(church_tree.children[1])
         conditional_expression.consequent = make_expression(church_tree.children[2])

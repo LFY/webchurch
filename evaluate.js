@@ -75,90 +75,90 @@ function evaluate(church_codestring,precomp,argstring) {
   console.log(code_and_source_map.code);
 
     
-	try {
+	// try {
     // var d1 = new Date()
     result = eval(code_and_source_map.code);
     // var d2 = new Date()
     // console.log("transformed source run time: ", (d2.getTime() - d1.getTime()) / 1000)    
-	} catch (err) {
-    
-		var js_to_church_site_map = get_js_to_church_site_map(code_and_source_map.map);
-    var churchLines = church_codestring.split("\n");
-		var church_sites_to_tokens_map = get_church_sites_to_tokens_map(tokens);
-		var stack = err.stack.split("\n");
-		var msg = stack[0].split(":");
-    
-		var js_sites = get_sites_from_stack(stack.slice(1));
-		var church_sites = [];
-		for (var i = 0; i < js_sites.length; i++) {
-			var js_site = js_sites[i];
-			var church_site = js_to_church_site_map[js_site[0]] && js_to_church_site_map[js_site[0]][js_site[1]];
-      
-			if(church_site){church_sites.push(church_site);};
-		}
-    
-    //        console.log("js source ",code_and_source_map.code)
-    //        console.log("error stack ", msg)
-    //        console.log("js_sites ",js_sites)
-    //        console.log("source map ", code_and_source_map.map)
-    //        console.log("js to church site map ", js_to_church_site_map)
-    //        console.log("church sites ot tokens ", church_sites_to_tokens_map)
-    //        console.log("church_sites ", church_sites)
-    
-    // 		church_sites = church_sites.filter(function (x) {return x});
-    
- 		if (church_sites.length == 0) {
-            console.log("NO CHURCH SITES");
- 			throw err;
- 		} else {
-      
-			var token = church_sites_to_tokens_map[church_sites[0]],
-          displayedMessage = err.message;
-      
-      // error sometimes matches on starting paren rather than the function name
-      // so seek to next token, which willbe the function name
-      var fntoken;
-      if (token.text == "(") {
-        var tokStart = token.start,
-            tokEnd = token.end,
-            tokeNum;
-        
-        for(var j = 0, jj = tokens.length; j < jj; j++) {
-          if (tokens[j].start == tokStart && tokens[j].end == tokEnd) {
-            tokeNum = j;
-          }
-        }
-        fntoken = tokens[tokeNum + 1];
-      }
-
-      
-      if (msg[0] == "ReferenceError") {
-        token = fntoken?fntoken:token;
-        displayedMessage = token.text + " is not defined";
-        
-      }
-      
-      if (msg[0] == "TypeError") {
-        token = fntoken?fntoken:token;
-        displayedMessage = token.text + " is not a function";
-      } 
-      
-      if (msg[1].match(/functionName/)) {
-        token = fntoken?fntoken:token;
-        
-        displayedMessage = err.message.replace('<<functionName>>', token.text);
-      };
-      
-			var e = util.make_church_error(msg[0], token.start, token.end, displayedMessage);
-			e.stack = church_sites.map(function(x) {
-        var tok = church_sites_to_tokens_map[x];
-        return tok.start + "-" + tok.end;
-      }).join(",");
-      e.stackarray = church_sites.map(function(x) {return church_sites_to_tokens_map[x]})
-      
- 			throw e;
- 		}
-	}
+// 	} catch (err) {
+//     
+// 		var js_to_church_site_map = get_js_to_church_site_map(code_and_source_map.map);
+//     var churchLines = church_codestring.split("\n");
+// 		var church_sites_to_tokens_map = get_church_sites_to_tokens_map(tokens);
+// 		var stack = err.stack.split("\n");
+// 		var msg = stack[0].split(":");
+//     
+// 		var js_sites = get_sites_from_stack(stack.slice(1));
+// 		var church_sites = [];
+// 		for (var i = 0; i < js_sites.length; i++) {
+// 			var js_site = js_sites[i];
+// 			var church_site = js_to_church_site_map[js_site[0]] && js_to_church_site_map[js_site[0]][js_site[1]];
+//       
+// 			if(church_site){church_sites.push(church_site);};
+// 		}
+//     
+//     //        console.log("js source ",code_and_source_map.code)
+//     //        console.log("error stack ", msg)
+//     //        console.log("js_sites ",js_sites)
+//     //        console.log("source map ", code_and_source_map.map)
+//     //        console.log("js to church site map ", js_to_church_site_map)
+//     //        console.log("church sites ot tokens ", church_sites_to_tokens_map)
+//     //        console.log("church_sites ", church_sites)
+//     
+//     // 		church_sites = church_sites.filter(function (x) {return x});
+//     
+//  		if (church_sites.length == 0) {
+//             console.log("NO CHURCH SITES");
+//  			throw err;
+//  		} else {
+//       
+// 			var token = church_sites_to_tokens_map[church_sites[0]],
+//           displayedMessage = err.message;
+//       
+//       // error sometimes matches on starting paren rather than the function name
+//       // so seek to next token, which willbe the function name
+//       var fntoken;
+//       if (token.text == "(") {
+//         var tokStart = token.start,
+//             tokEnd = token.end,
+//             tokeNum;
+//         
+//         for(var j = 0, jj = tokens.length; j < jj; j++) {
+//           if (tokens[j].start == tokStart && tokens[j].end == tokEnd) {
+//             tokeNum = j;
+//           }
+//         }
+//         fntoken = tokens[tokeNum + 1];
+//       }
+// 
+//       
+//       if (msg[0] == "ReferenceError") {
+//         token = fntoken?fntoken:token;
+//         displayedMessage = token.text + " is not defined";
+//         
+//       }
+//       
+//       if (msg[0] == "TypeError") {
+//         token = fntoken?fntoken:token;
+//         displayedMessage = token.text + " is not a function";
+//       } 
+//       
+//       if (msg[1].match(/functionName/)) {
+//         token = fntoken?fntoken:token;
+//         
+//         displayedMessage = err.message.replace('<<functionName>>', token.text);
+//       };
+//       
+// 			var e = util.make_church_error(msg[0], token.start, token.end, displayedMessage);
+// 			e.stack = church_sites.map(function(x) {
+//         var tok = church_sites_to_tokens_map[x];
+//         return tok.start + "-" + tok.end;
+//       }).join(",");
+//       e.stackarray = church_sites.map(function(x) {return church_sites_to_tokens_map[x]})
+//       
+//  			throw e;
+//  		}
+// 	}
   
 	return result;
 }
