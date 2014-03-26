@@ -19,7 +19,9 @@
     "source-map": "0.1.30",
     "browserify": "2.36.0",
     "optparse": "1.0.5",
-    "underscore": "~1.6.0"
+    "underscore": "~1.6.0",
+    "codemirror": "~3.20.0",
+    "d3": "~3.3.11"
   },
   "author": {
     "name": "Julius Cheng",
