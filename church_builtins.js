@@ -70,8 +70,9 @@ var _const = $b({
     name : "_const",
     alias : "const",
     desc : "Marks constants. Library function only!",
-    params : [{name : 'v', type : "", desc: "the constant in question"}],
-    fn : function (x) { return x; }
+    numArgs : [0,1],
+    params : [{name : '[v]', type : "", desc: "the constant in question or '()"}],
+    fn : function () { if (arguments.length == 0) {return [null]} ; return arguments[0]; }
 });
 
 var _if = $b({
