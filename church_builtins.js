@@ -1139,6 +1139,17 @@ var wrapped_random_integer = $b({
   }
 });
 
+var wrapped_factor = $b({
+    name: "wrapped_factor",
+    desc: "wrapped factor statement",
+    numArgs: [1],
+    params: [{name: "score", type : "real", default : 0}],
+    fn : function(score) {
+        factor(score);
+        return score;
+    }
+});
+
 var wrapped_gaussian = $b({
   name: 'wrapped_gaussian',
   desc: 'Sample from the Gaussian distribution N(mu, sigma)',
