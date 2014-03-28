@@ -156,9 +156,9 @@ function probTransformAST(ast)
 {
     estraverse.replace(ast, WrapIfs)
 	estraverse.replace(ast, MoveCalls)
-	ast.body.unshift(esprima.parse(preamble))
+	// ast.body.unshift(esprima.parse(preamble))
     estraverse.replace(ast, BlockStatementCollapser)
-	return ast
+	return [esprima.parse(preamble), ast]
 }
 
 

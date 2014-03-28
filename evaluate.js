@@ -57,27 +57,35 @@ function evaluate(church_codestring,precomp,argstring) {
   gensymCount = 0;
   var tokens = tokenize(church_codestring);
 	var result;    
-    
+   
+   var js_ast;
+  var preambled_transformed_js_ast;
+
   //flag for precompilation pass:
   if(precomp) {
     console.log("pre-compiling...");
     var js_precompiled = precompile(church_codestring);
-    var js_ast = esprima.parse(js_precompiled);
-    js_ast = wctransform.probTransformAST(js_ast); //new wc transform
+    js_ast = esprima.parse(js_precompiled);
+    preambled_transformed_js_ast = wctransform.probTransformAST(js_ast); //new wc transform
   } else {
     var church_ast = church_astify(tokens);
-    var js_ast = js_astify(church_ast);
-    js_ast = wctransform.probTransformAST(js_ast); //new wc transform
+    js_ast = js_astify(church_ast);
+    preambled_transformed_js_ast = wctransform.probTransformAST(js_ast); //new wc transform
   }
-    
+   
+ var preamble = preambled_transformed_js_ast[0];
+ var preamble_code = escodegen.generate(preamble)
+
+ js_ast = preambled_transformed_js_ast[1];
+
   var code_and_source_map = escodegen.generate(js_ast, {"sourceMap": "whatever", "sourceMapWithCode": true, "format": {"compact" : false}});
     
+  // console.log(preamble_code)
   console.log(code_and_source_map.code);
-
     
 	// try {
     // var d1 = new Date()
-    result = eval(code_and_source_map.code);
+    result = eval(preamble_code +  code_and_source_map.code);
     // var d2 = new Date()
     // console.log("transformed source run time: ", (d2.getTime() - d1.getTime()) / 1000)    
 // 	} catch (err) {
