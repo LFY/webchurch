@@ -6,3 +6,4 @@ probabilistic
 *.swo
 *.swp
 *.swn
+npm-debug.log
